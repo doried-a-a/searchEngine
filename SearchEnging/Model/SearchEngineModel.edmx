@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SearchEngineModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="SearchEngineModelStoreContainer">
+    <EntitySet Name="DocumentSet" EntityType="SearchEngineModel.Store.DocumentSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="WordSet" EntityType="SearchEngineModel.Store.WordSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="DocumentWordRelationshipSet" EntityType="SearchEngineModel.Store.DocumentWordRelationshipSet" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="WordDocumentWordRelationship" Association="SearchEngineModel.Store.WordDocumentWordRelationship">
+      <End Role="Word" EntitySet="WordSet" />
+      <End Role="DocumentWordRelationship" EntitySet="DocumentWordRelationshipSet" />
+    </AssociationSet>
+    <AssociationSet Name="DocumentDocumentWordRelationship" Association="SearchEngineModel.Store.DocumentDocumentWordRelationship">
+      <End Role="Document" EntitySet="DocumentSet" />
+      <End Role="DocumentWordRelationship" EntitySet="DocumentWordRelationshipSet" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="DocumentSet">
+    <Key>
+      <PropertyRef Name="DocumentId" />
+    </Key>
+    <Property Name="DocumentId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Uri" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DateIndexed" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="WordSet">
+    <Key>
+      <PropertyRef Name="Value" />
+    </Key>
+    <Property Name="Value" Type="nvarchar" Nullable="false" MaxLength="200" />
+  </EntityType>
+  <EntityType Name="DocumentWordRelationshipSet">
+    <Key>
+      <PropertyRef Name="WordValue" />
+      <PropertyRef Name="DocumentId" />
+    </Key>
+    <Property Name="WordValue" Type="nvarchar" Nullable="false" MaxLength="200" />
+    <Property Name="DocumentId" Type="int" Nullable="false" />
+    <Property Name="Frequency" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="WordDocumentWordRelationship">
+    <End Role="Word" Type="SearchEngineModel.Store.WordSet" Multiplicity="1" />
+    <End Role="DocumentWordRelationship" Type="SearchEngineModel.Store.DocumentWordRelationshipSet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Word">
+        <PropertyRef Name="Value" />
+      </Principal>
+      <Dependent Role="DocumentWordRelationship">
+        <PropertyRef Name="WordValue" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="DocumentDocumentWordRelationship">
+    <End Role="Document" Type="SearchEngineModel.Store.DocumentSet" Multiplicity="1" />
+    <End Role="DocumentWordRelationship" Type="SearchEngineModel.Store.DocumentWordRelationshipSet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Document">
+        <PropertyRef Name="DocumentId" />
+      </Principal>
+      <Dependent Role="DocumentWordRelationship">
+        <PropertyRef Name="DocumentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="SearchEngineModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="SearchEngineModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DocumentSet" EntityType="SearchEngineModel.Document" />
+          <EntitySet Name="WordSet" EntityType="SearchEngineModel.Word" />
+          <EntitySet Name="DocumentWordRelationshipSet" EntityType="SearchEngineModel.DocumentWordRelationship" />
+          <AssociationSet Name="WordDocumentWordRelationship" Association="SearchEngineModel.WordDocumentWordRelationship">
+            <End Role="Word" EntitySet="WordSet" />
+            <End Role="DocumentWordRelationship" EntitySet="DocumentWordRelationshipSet" />
+          </AssociationSet>
+          <AssociationSet Name="DocumentDocumentWordRelationship" Association="SearchEngineModel.DocumentDocumentWordRelationship">
+            <End Role="Document" EntitySet="DocumentSet" />
+            <End Role="DocumentWordRelationship" EntitySet="DocumentWordRelationshipSet" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Document">
+          <Key>
+            <PropertyRef Name="DocumentId" />
+          </Key>
+          <Property Type="Int32" Name="DocumentId" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Title" Nullable="false" />
+          <Property Type="String" Name="Uri" Nullable="false" />
+          <Property Type="String" Name="DateIndexed" Nullable="false" />
+          <NavigationProperty Name="words" Relationship="SearchEngineModel.DocumentDocumentWordRelationship" FromRole="Document" ToRole="DocumentWordRelationship" />
+        </EntityType>
+        <EntityType Name="Word">
+          <Key>
+            <PropertyRef Name="Value" />
+          </Key>
+          <Property Type="String" Name="Value" Nullable="false" MaxLength="200" />
+          <NavigationProperty Name="documents" Relationship="SearchEngineModel.WordDocumentWordRelationship" FromRole="Word" ToRole="DocumentWordRelationship" />
+        </EntityType>
+        <EntityType Name="DocumentWordRelationship">
+          <Key>
+            <PropertyRef Name="WordValue" />
+            <PropertyRef Name="DocumentId" />
+          </Key>
+          <NavigationProperty Name="Word" Relationship="SearchEngineModel.WordDocumentWordRelationship" FromRole="DocumentWordRelationship" ToRole="Word" />
+          <Property Type="String" Name="WordValue" Nullable="false" MaxLength="200" />
+          <NavigationProperty Name="Document" Relationship="SearchEngineModel.DocumentDocumentWordRelationship" FromRole="DocumentWordRelationship" ToRole="Document" />
+          <Property Type="Int32" Name="DocumentId" Nullable="false" />
+          <Property Type="Int32" Name="Frequency" Nullable="false" />
+        </EntityType>
+        <Association Name="WordDocumentWordRelationship">
+          <End Type="SearchEngineModel.Word" Role="Word" Multiplicity="1" />
+          <End Type="SearchEngineModel.DocumentWordRelationship" Role="DocumentWordRelationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Word">
+              <PropertyRef Name="Value" />
+            </Principal>
+            <Dependent Role="DocumentWordRelationship">
+              <PropertyRef Name="WordValue" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="DocumentDocumentWordRelationship">
+          <End Type="SearchEngineModel.Document" Role="Document" Multiplicity="1" />
+          <End Type="SearchEngineModel.DocumentWordRelationship" Role="DocumentWordRelationship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Document">
+              <PropertyRef Name="DocumentId" />
+            </Principal>
+            <Dependent Role="DocumentWordRelationship">
+              <PropertyRef Name="DocumentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SearchEngineModelStoreContainer" CdmEntityContainer="SearchEngineModelContainer">
+    <EntitySetMapping Name="DocumentSet">
+      <EntityTypeMapping TypeName="IsTypeOf(SearchEngineModel.Document)">
+        <MappingFragment StoreEntitySet="DocumentSet">
+          <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Uri" ColumnName="Uri" />
+          <ScalarProperty Name="DateIndexed" ColumnName="DateIndexed" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WordSet">
+      <EntityTypeMapping TypeName="IsTypeOf(SearchEngineModel.Word)">
+        <MappingFragment StoreEntitySet="WordSet">
+          <ScalarProperty Name="Value" ColumnName="Value" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DocumentWordRelationshipSet">
+      <EntityTypeMapping TypeName="IsTypeOf(SearchEngineModel.DocumentWordRelationship)">
+        <MappingFragment StoreEntitySet="DocumentWordRelationshipSet">
+          <ScalarProperty Name="WordValue" ColumnName="WordValue" />
+          <ScalarProperty Name="DocumentId" ColumnName="DocumentId" />
+          <ScalarProperty Name="Frequency" ColumnName="Frequency" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram Name="SearchEngineModel" >
+        <EntityTypeShape EntityType="SearchEngineModel.Document" Width="1.5" PointX="1.125" PointY="0.5" Height="1.787985026041667" />
+        <EntityTypeShape EntityType="SearchEngineModel.Word" Width="1.5" PointX="7.5" PointY="0.75" Height="1.2110807291666668" />
+        <EntityTypeShape EntityType="SearchEngineModel.DocumentWordRelationship" Width="1.5" PointX="4.25" PointY="0.625" Height="1.9802864583333335" />
+        <AssociationConnector Association="SearchEngineModel.WordDocumentWordRelationship">
+          <ConnectorPoint PointX="7.5" PointY="1.4516910807291668" />
+          <ConnectorPoint PointX="5.75" PointY="1.4516910807291668" />
+        </AssociationConnector>
+        <AssociationConnector Association="SearchEngineModel.DocumentDocumentWordRelationship">
+          <ConnectorPoint PointX="2.625" PointY="1.5526432291666668" />
+          <ConnectorPoint PointX="4.25" PointY="1.5526432291666668" />
+        </AssociationConnector>
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
