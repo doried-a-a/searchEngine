@@ -10,6 +10,11 @@ namespace SearchEnging.utils.nlp
         private static RemoveStopWordsClass stopwordsDetector = new RemoveStopWordsClass();
         private static ISRI isri = new ISRI();
 
+        public static String stemWord(String str)
+        {
+            return isri.Stemming(str);
+        }
+
         public static String processText(String str)
         {
             String processed = "";

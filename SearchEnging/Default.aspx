@@ -20,7 +20,7 @@
     <br />
     <asp:Label ID="lblResultsCount" runat="server" Text="" ForeColor="Blue" Font-Bold="true"></asp:Label>
     <br />
-   <div style="text-align:right" dir="rtl">
+   <div style="text-align:left" dir="ltr">
         <asp:Label  id="lblResults" runat="server" Font-Names="Arial"  >
         
         </asp:Label>

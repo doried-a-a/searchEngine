@@ -22,11 +22,6 @@ namespace SearchEnging.utils.Collection
             this.wordFreq = freq;
         }
 
-        public void increment(int by)
-        {
-            this.wordFreq += by;
-        }
-
         public String getWord()
         {
             return this.wordValue;

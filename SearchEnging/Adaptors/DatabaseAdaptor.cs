@@ -170,6 +170,20 @@ namespace SearchEnging.Adaptors
             }
         }
 
+        public static List<Document> getAllDocuments()
+        {
+            try
+            {
+                var res = from doc in container.DocumentSet
+                          select doc;
+                return res.ToList();
+            }
+            catch (Exception ee)
+            {
+                throw ee;
+            }
+        }
+
         public static List<DocumentWordRelationship> getDocumentsContainingWord(String w)
         {
             try
@@ -185,17 +199,6 @@ namespace SearchEnging.Adaptors
             }
         }
 
-        public static List<Document> getAllDocuments()
-        {
-            try
-            {
-                return container.DocumentSet.ToList();
-            }
-            catch (Exception ee)
-            {
-                throw ee;
-            }
-        }
 
         public static Document findDocumentByPath(String path)
         {

@@ -136,6 +136,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SearchEngineModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="retrieval\boolean\BooleanQuery.cs" />
+    <Compile Include="retrieval\boolean\Retriever.cs" />
+    <Compile Include="retrieval\general\AndExpression.cs" />
+    <Compile Include="retrieval\general\ExpressionBuilder.cs" />
+    <Compile Include="retrieval\general\ExpressionHolder.cs" />
+    <Compile Include="retrieval\general\IBooleanExpression.cs" />
+    <Compile Include="retrieval\general\Not.cs" />
+    <Compile Include="retrieval\general\OrExpression.cs" />
+    <Compile Include="retrieval\general\Term.cs" />
+    <Compile Include="retrieval\parser\IToken.cs" />
+    <Compile Include="retrieval\parser\Operation.cs" />
+    <Compile Include="retrieval\parser\Parser.cs" />
+    <Compile Include="retrieval\parser\Word.cs" />
     <Compile Include="utils\highlight\BoldColorHighlighter.cs" />
     <Compile Include="utils\highlight\BoldHilighter.cs" />
     <Compile Include="utils\highlight\ColorHighlighter.cs" />
@@ -182,6 +195,7 @@
       <LastGenOutput>SearchEngineModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>

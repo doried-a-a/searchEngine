@@ -13,15 +13,34 @@ namespace SearchEnging.utils.Collection
         private String path;
         private String date;
 
+        List<DocumentWord> list = new List<DocumentWord>();
+
+        private void computeWords()
+        {
+            list = new List<DocumentWord>();
+
+            String pprocessedText = nlp.TextProcessor.processText(text);
+            String[] terms = pprocessedText.Split(' ');
+            String[] words = terms.Distinct().ToArray();
+
+            foreach (String word in words)
+            {
+                int count = terms.Where(e => e.Equals(word)).Count();
+                list.Add(new DocumentWord(word, count));
+            }
+        }
+
         public TextDocument(String text)
         {
             this.text = text;
+            computeWords();
         }
 
         public TextDocument(String text,String path)
         {
             this.text = text;
-            this.path = path; 
+            this.path = path;
+            computeWords();
         }
 
         public TextDocument(String text,String path,String title,String date)
@@ -30,6 +49,7 @@ namespace SearchEnging.utils.Collection
             this.path = path;
             this.title = title;
             this.date = date;
+            computeWords();
         }
 
         public String getText(){
@@ -53,17 +73,7 @@ namespace SearchEnging.utils.Collection
 
         public List<DocumentWord> getDocumentWords()
         {
-            String pprocessedText = nlp.TextProcessor.processText(text);
-            String[] terms = pprocessedText.Split(' ');
-            String [] words = terms.Distinct().ToArray();
-            List<DocumentWord> list = new List<DocumentWord>();
-
-            foreach(String word in words){
-                int count = terms.Where(e => e.Equals(word)).Count();
-                list.Add(new DocumentWord(word, count));
-            }
-
-            return list;
+            return list; 
         }
     }
 }

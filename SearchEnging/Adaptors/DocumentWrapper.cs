@@ -42,5 +42,7 @@ namespace SearchEnging.Adaptors
         {
             return textDocument.getText();
         }
+
+
     }
 }

@@ -28,3 +28,5 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.vssscc
 $tf*/
+SearchEnging/App_Data/db_log.LDF
+*.LDF

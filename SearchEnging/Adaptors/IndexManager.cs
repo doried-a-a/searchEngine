@@ -128,5 +128,14 @@ namespace SearchEnging.Adaptors
                 ret.Add(getDocumentWrapper(rel.Document));
             return ret;
         }
+
+        public List<DocumentWrapper> getAllDocuments()
+        {
+            var list = DatabaseAdaptor.getAllDocuments();
+            List<DocumentWrapper> ret = new List<DocumentWrapper>();
+            foreach (Document doc in list)
+                ret.Add(getDocumentWrapper(doc));
+            return ret;
+        }
     }
 }

@@ -35,8 +35,8 @@ namespace SearchEnging.utils.highlight
                 Token token = tokenizer.Next();
                 if (token.Kind == TokenKind.EOF)
                     break;
-
-                if (queryWords.Contains(TextProcessor.processText(token.Value)))
+               
+                if ( TextProcessor.processText(token.Value).Length>0 && queryWords.Contains(TextProcessor.processText(token.Value)))
                 {
 
                     if (prevWords.Count > 0)
@@ -79,6 +79,11 @@ namespace SearchEnging.utils.highlight
                     }
 
                 }
+            }
+
+            if (ret.Length == 0)
+            {
+                ret = text.Substring(0, Math.Min(text.Length, 100)) + "..";
             }
             return ret;
         }

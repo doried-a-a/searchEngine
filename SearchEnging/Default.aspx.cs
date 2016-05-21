@@ -8,6 +8,10 @@ using SearchEnging.utils;
 using SearchEnging.utils.Collection;
 using SearchEnging.Adaptors;
 using SearchEnging.utils.highlight;
+using SearchEnging.retrieval.boolean;
+using SearchEnging.retrieval;
+using SearchEnging.retrieval.general;
+using SearchEnging.retrieval.parser;
 
 namespace SearchEnging
 {
@@ -23,26 +27,61 @@ namespace SearchEnging
         protected void btnSearch_Click(object sender, EventArgs e)
         {
             lblResults.Text = "";
-            
 
-            var query = txtSearch.Text;
-            var processedQuery = utils.nlp.TextProcessor.processText(query);
+            String text = txtSearch.Text;
 
-            List<DocumentWrapper> docs = mgr.getDocumentsContainingWord(processedQuery);
-            lblResultsCount.Text = String.Format("Found {0} result(s).", docs.Count);
+            //Boolean
+            //==============================================================================
 
-           
-            WordHighligter highlighter = new WordHighligter(new BoldColorHighlighter("Red"));
-            
-            foreach (var doc in docs)
+            // converting query to string of tokens (words + And, Or,Not and () sumbols)
+            try
             {
-                String highlightedText = highlighter.highlistString(doc.getText(), query);
-                
+                while (text.Contains(' '))
+                    text = text.Replace(" ", "");
 
-                lblResults.Text += "" + new BoldHilighter().highlight(doc.getTitle() + " [" + doc.getTextDocument().getPath() + "]") +
-                    "<br>"
-                    + highlightedText +
-                    "<hr><br>";
+                Parser parser = new Parser();
+                List<IToken> tokens = parser.convertStringToTokens(text);
+                // stemming words
+                foreach (IToken token in tokens)
+                    if (token is Word)
+                    {
+                        Word word = token as Word;
+                        word.setWord(utils.nlp.TextProcessor.stemWord(word.getWord()));
+                    }
+                // this converts the tokens to a boolean expression IBooleanExpression, 
+                ExpressionBuilder builder = new ExpressionBuilder();
+                //the following will return the IBooleanExpression encapsulated by a holder which also contains the terms
+                var expHolder = builder.buildExpression(tokens);
+                //converting the resulting IBooleanExpression to DNF (Disjoint Normal Form)
+                expHolder = ExpressionBuilder.convertToDNF(expHolder);
+
+                var exp = expHolder.getExpression() as OrExpression;
+                var terms = expHolder.getTerms().Values; // this terms are stemmed
+
+                // retriever
+                var retriever = new retrieval.boolean.Retriever();
+                BooleanQuery bQuery = new BooleanQuery(exp);
+
+                List<DocumentWrapper> docs = retriever.getDocumentsForBooleanQuery(bQuery);
+
+                lblResultsCount.Text = String.Format("Found {0} result(s).", docs.Count);
+
+                WordHighligter highlighter = new WordHighligter(new BoldColorHighlighter("Red"));
+
+                foreach (var doc in docs)
+                {
+                    String highlightedText = highlighter.highlistString(doc.getText(), text);
+
+                    lblResults.Text += "" + new BoldHilighter().highlight(doc.getTitle() + " [" + doc.getTextDocument().getPath() + "]") +
+                        "<br>"
+                        + highlightedText +
+                        "<hr><br>";
+                }
+            }
+            catch (Exception ee)
+            {
+                lblResults.Text = "";
+                lblResultsCount.Text = "Error while parsing query. Enter the query correctly please.";
             }
         }
     }
